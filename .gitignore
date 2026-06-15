@@ -1,0 +1,30 @@
+# Environments
+venv/
+env/
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Models and ML Data
+models/*.pkl
+models/*.pkl.sha256
+!models/.gitkeep
+
+# Data 
+data/merged/*
+!data/merged/.gitkeep
+!data/merged/sample_traffic.csv
+
+# Logs
+logs/*
+!logs/.gitkeep
+
+# IDEs & OS
+.vscode/
+.idea/
+*.swp
+.DS_Store

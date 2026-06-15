@@ -1,0 +1,28 @@
+# NIDS Cyber Radar - Kurumsal Konfigürasyon Dosyası
+
+data:
+  max_files_train: 63
+  max_files_xai: 2
+  test_size: 0.2
+  random_state: 42
+
+model:
+  # Sabit parametreler — yalnızca optuna_trials: 0 ise kullanılır
+  n_estimators: 100
+  max_depth: null
+  n_jobs: 2
+  class_weight: "balanced"
+  # Optuna trial sayısı. 0 ise optimizasyon atlanır, yukarıdaki sabit
+  # parametreler devreye girer. Hızlı test için 0, tam çalıştırma için 20+.
+  optuna_trials: 5
+
+xai:
+  sample_size: 300
+  max_display_features: 10
+  # UI'da tahmin başına gösterilecek maksimum özellik sayısı (SHAP bar grafik)
+  top_n_local_features: 12
+
+# Etiket sınıflandırma sabitleri
+# Veri seti etiket isimleri değişirse yalnızca burası güncellenir.
+labels:
+  benign_keyword: "BENIGN"

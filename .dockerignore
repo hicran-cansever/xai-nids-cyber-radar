@@ -1,0 +1,56 @@
+# ============================================================
+# .dockerignore — NIDS Cyber Radar
+# Docker build bağlamından hariç tutulacak dosyalar.
+#
+# Neden gerekli?
+# "COPY . ." komutu .dockerignore olmadan tüm proje dizinini
+# Docker build bağlamına kopyalar. Bu;
+#   - 1.8 GB model dosyası (.pkl)
+#   - 9 GB+ ham veri (data/merged/*.csv)
+#   - yüzlerce MB sanal ortam (venv/)
+#   - hassas log dosyaları (logs/)
+# gibi içeriklerin imaja gömülmesine yol açar.
+# ============================================================
+
+# Python sanal ortamı (pip ile yeniden kurulacak)
+venv/
+.venv/
+env/
+
+# Python önbellek dosyaları
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Ham veri dosyaları (Docker ortamında volume mount ile sağlanmalı)
+data/merged/
+
+# Eğitilmiş model dosyaları (volume mount veya entrypoint.sh ile yönetilmeli)
+models/*.pkl
+models/*.sha256
+
+# Log dosyaları (hassas sistem bilgisi içerebilir)
+logs/
+
+# Geliştirme ve IDE dosyaları
+.git/
+.gitignore
+.vscode/
+.idea/
+*.code-workspace
+
+# Test ve CI dosyaları
+tests/
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Belgeleme (imaj boyutunu gereksiz artırır)
+README.md
+*.md
+
+# İşletim sistemi artıkları
+.DS_Store
+Thumbs.db
