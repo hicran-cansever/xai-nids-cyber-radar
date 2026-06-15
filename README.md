@@ -45,9 +45,7 @@
 
 ## 🎯 Proje Hakkında
 
-**NIDS Cyber Radar**, CENG 3544 Computer and Network Security dersi kapsamında geliştirilen, **kurumsal düzey bir Ağ Saldırı Tespit Sistemi (NIDS)**'dir. Bu sistem; ham ağ trafiği paketlerini gerçek zamanlı olarak sınıflandırır ve kararlarının gerekçesini **SHAP (SHapley Additive exPlanations)** değerleri aracılığıyla SOC analistlerine görsel olarak sunar.
-
-Standart bir makine öğrenmesi alıştırmasının ötesine geçerek, proje; **RAM güvenliği**, **veri sızıntısı koruması**, **model bütünlük doğrulaması** ve **gerçek zamanlı açıklanabilirlik** gibi, üretim ortamlarında kritik olan mühendislik problemlerini özgün çözümlerle ele almaktadır.
+**NIDS Cyber Radar**, CENG 3544 Computer and Network Security dersi kapsamında geliştirilen Ağ Saldırı Tespit Sistemi (NIDS)**'dir. Bu sistem ham ağ trafiği paketlerini gerçek zamanlı olarak sınıflandırır ve kararlarının gerekçesini **SHAP (SHapley Additive exPlanations)** değerleri aracılığıyla SOC analistlerine görsel olarak sunar.
 
 ### Temel Yetenekler
 
@@ -67,7 +65,7 @@ Standart bir makine öğrenmesi alıştırmasının ötesine geçerek, proje; **
 
 **Modül:** [`src/data_loader.py`](src/data_loader.py) → `IoTDataLoader`
 
-**Problem:** CIC-IoT-2023 gibi devasa ağ trafiği veri setleri (63+ CSV dosyası), naif bir `pd.read_csv()` yaklaşımıyla yüklendiğinde işletim sistemi düzeyinde **OOM (Out-of-Memory) kilitlenmesine** yol açar. Bunun yanı sıra `BENIGN` sınıfının veri setine ezici üstünlüğü, `XSS` veya `SQL Injection` gibi nadir saldırı sınıflarının model tarafından görmezden gelmesine neden olur.
+**Problem:** CIC-IoT-2023 gibi devasa ağ trafiği veri setleri (63+ CSV dosyası),  `pd.read_csv()` yaklaşımıyla yüklendiğinde işletim sistemi düzeyinde **OOM (Out-of-Memory) kilitlenmesine** yol açar. Bunun yanı sıra `BENIGN` sınıfının veri setine ezici üstünlüğü, `XSS` veya `SQL Injection` gibi nadir saldırı sınıflarının model tarafından görmezden gelmesine neden olur.
 
 **Çözüm — Dört Kademeli Savunma Hattı:**
 
@@ -390,9 +388,7 @@ models/
 
 ## 🎯 About The Project
 
-**NIDS Cyber Radar** is an **enterprise-grade Network Intrusion Detection System (NIDS)** developed as part of the CENG 3544 Computer and Network Security course. The system classifies raw network traffic packets in real time and visually presents the rationale behind each decision to SOC analysts via **SHAP (SHapley Additive exPlanations)** values.
-
-Beyond a standard machine learning exercise, this project addresses production-critical engineering challenges including **RAM safety**, **data leakage prevention**, **model integrity verification**, and **real-time explainability** through original solutions.
+**NIDS Cyber Radar** is an ** Network Intrusion Detection System (NIDS)** developed as part of the CENG 3544 Computer and Network Security course. The system classifies raw network traffic packets in real time and visually presents the rationale behind each decision to SOC analysts via **SHAP (SHapley Additive exPlanations)** values.
 
 ### Core Capabilities
 
