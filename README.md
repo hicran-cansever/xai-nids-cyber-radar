@@ -63,10 +63,6 @@ Standart bir makine öğrenmesi alıştırmasının ötesine geçerek, proje; **
 
 ## 🏗️ Mimari Başarılar & Özel Mühendislik Çözümleri
 
-Bu bölüm, projenin standart bir ML modelinin ötesinde neden **kurumsal seviyede** değerlendirilmesi gerektiğini açıklamaktadır.
-
----
-
 ### 1️⃣ Smart Siphoning — Akıllı Cımbızlama Boru Hattı
 
 **Modül:** [`src/data_loader.py`](src/data_loader.py) → `IoTDataLoader`
@@ -412,9 +408,6 @@ Beyond a standard machine learning exercise, this project addresses production-c
 
 ## 🏗️ Architectural Achievements & Engineering Solutions
 
-This section explains why the project should be considered **enterprise-grade** beyond a standard ML pipeline.
-
----
 
 ### 1️⃣ Smart Siphoning — Intelligent Stratified Sub-sampling Pipeline
 
