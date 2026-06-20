@@ -39,7 +39,7 @@
 - [Kurulum & Çalıştırma (Docker)](#-kurulum--çalıştırma-docker)
 - [Proje Yapısı](#-proje-yapısı)
 - [Konfigürasyon](#-konfigürasyon)
-- [Champion Model Sürümü](#-champion-model-sürümü)
+- [Eğitilmiş Model Sürümü](#-eğitilmiş-model-sürümü)
 
 ---
 
@@ -114,7 +114,7 @@ max_features   : ["sqrt", "log2"]
 class_weight   : "balanced"  # Sınıf dengesizliği için sabit
 ```
 
-**Kilitlenen Şampiyon Mimari:**
+**Seçilen Mimari:**
 - **n_estimators: 250** ağaç (Optuna TPE tarafından seçildi)
 - **Optimizasyon Hedefi:** 3-katlı Çapraz Doğrulama ile Macro F1 Skoru
 - **Veri Sızıntısı Koruması:** LabelEncoder yalnızca `y_train` üzerinde `fit()` edilir; test seti yalnızca `transform()` görür
@@ -167,7 +167,7 @@ live_packet = live_packet[expected_cols]
 
 #### Global XAI (`xai_explainer.py`)
 ```
-Champion Model + 300 örneklik temsili veri seti
+Eğitilmiş Model + 300 örneklik temsili veri seti
         ↓
 SHAP TreeExplainer (ağaç yapısı doğrudan kullanılır, model-agnostik değil)
         ↓
@@ -220,14 +220,14 @@ xai_nids_project/
 ├── 📄 requirements.txt        # Tam bağımlılık manifestosu
 │
 ├── 📁 src/
-│   ├── data_loader.py         # IoTDataLoader → Akıllı Cımbızlama + RAM Sıkıştırma
-│   ├── train_model.py         # Optuna TPE → Champion RF → SHA-256 Serileştirme
+│   ├── data_loader.py         # IoTDataLoader → Alt-örnekleme + RAM Sıkıştırma
+│   ├── train_model.py         # Optuna TPE → Random Forest → SHA-256 Serileştirme
 │   ├── xai_explainer.py       # Global SHAP → Summary Bar Chart (300 DPI)
 │   ├── poc_ui.py              # Streamlit SOC Terminal
 │   └── utils.py               # Yol/Config/Log/SHA-256 Güvenlik Katmanı
 │
 ├── 📁 models/
-│   ├── nids_champion_model.pkl       # ~305 MB Champion RF (250 ağaç)
+│   ├── nids_champion_model.pkl       # ~305 MB Eğitilmiş Model (250 ağaç)
 │   ├── nids_champion_model.pkl.sha256
 │   ├── label_encoder.pkl             # 34 Sınıf LabelEncoder
 │   └── label_encoder.pkl.sha256
@@ -251,7 +251,7 @@ xai_nids_project/
 | Eğitim/Test Ayrımı | Stratified 80% / 20% |
 | **Macro ROC-AUC (OvR)** | **%98.41** |
 | Toplam Sınıf | **34** (DDoS, XSS, SQL Injection, Port Scan, vb.) |
-| Veri Ön İşleme | Smart Siphoning + RAM Compression |
+| Veri Ön İşleme | Stratified Sub-sampling + RAM Compression |
 
 ---
 
@@ -271,8 +271,8 @@ xai_nids_project/
 git clone https://github.com/<kullanici-adi>/xai_nids_project.git
 cd xai_nids_project
 
-# 2. Champion modeli GitHub Releases'ten indirip models/ klasörüne koyun
-#    (bkz. "Champion Model Sürümü" bölümü)
+# 2. Eğitilmiş modeli GitHub Releases'ten indirip models/ klasörüne koyun
+#    (bkz. "Eğitilmiş Model Sürümü" bölümü)
 
 # 3. Sistemi tek komutla ayağa kaldırın
 docker-compose up --build
@@ -308,7 +308,7 @@ python -m venv venv
 # Bağımlılıkları yükle
 pip install -r requirements.txt
 
-# (Opsiyonel) Champion modeli yeniden eğit
+# (Opsiyonel) Modeli yeniden eğit
 python src/train_model.py
 
 # (Opsiyonel) Global SHAP grafiği üret
@@ -348,11 +348,11 @@ labels:
 
 ---
 
-## 🏆 Champion Model Sürümü
+## 🏆 Eğitilmiş Model Sürümü
 
 > **📦 Not:** `nids_champion_model.pkl` dosyası yaklaşık **305 MB** boyutunda olduğundan doğrudan Git deposuna eklenmemiştir.
 
-Eğitilmiş şampiyon model şu adreste yayımlanmaktadır:
+Eğitilmiş model şu adreste yayımlanmaktadır:
 
 **GitHub → Releases → [v1.0.0 Stable Release](../../releases/tag/v1.0.0)**
 
@@ -388,7 +388,7 @@ models/
 - [Installation & Deployment (Docker)](#-installation--deployment-docker)
 - [Project Structure](#-project-structure-1)
 - [Configuration](#-configuration-1)
-- [Champion Model Release](#-champion-model-release)
+- [Trained Model Release](#-trained-model-release)
 
 ---
 
@@ -463,7 +463,7 @@ max_features    : ["sqrt", "log2"]
 class_weight    : "balanced"   # fixed for class imbalance
 ```
 
-**Champion Architecture Selected by Optuna:**
+**Best Architecture Selected by Optuna:**
 - **n_estimators: 250** trees
 - **Optimisation Target:** Macro F1 Score via 3-fold Cross-Validation
 - **Zero Data Leakage:** LabelEncoder is `fit()` only on `y_train`; the test set sees only `transform()`
@@ -514,7 +514,7 @@ live_packet = live_packet[expected_cols]
 
 #### Global XAI (`xai_explainer.py`)
 ```
-Champion Model + 300-sample representative dataset
+Trained Model + 300-sample representative dataset
         ↓
 SHAP TreeExplainer (leverages tree structure directly)
         ↓
@@ -567,14 +567,14 @@ xai_nids_project/
 ├── 📄 requirements.txt        # Full dependency manifest
 │
 ├── 📁 src/
-│   ├── data_loader.py         # IoTDataLoader → Smart Siphoning + RAM Compression
-│   ├── train_model.py         # Optuna TPE → Champion RF → SHA-256 Serialisation
+│   ├── data_loader.py         # IoTDataLoader → Stratified Sub-sampling + RAM Compression
+│   ├── train_model.py         # Optuna TPE → Random Forest → SHA-256 Serialisation
 │   ├── xai_explainer.py       # Global SHAP → Summary Bar Chart (300 DPI)
 │   ├── poc_ui.py              # Streamlit SOC Terminal
 │   └── utils.py               # Path/Config/Logging/SHA-256 Security Layer
 │
 ├── 📁 models/
-│   ├── nids_champion_model.pkl       # ~305 MB Champion RF (250 trees)
+│   ├── nids_champion_model.pkl       # ~305 MB Trained RF (250 trees)
 │   ├── nids_champion_model.pkl.sha256
 │   ├── label_encoder.pkl             # 34-Class LabelEncoder
 │   └── label_encoder.pkl.sha256
@@ -598,7 +598,7 @@ xai_nids_project/
 | Train/Test Split | Stratified 80% / 20% |
 | **Macro ROC-AUC (OvR)** | **98.41%** |
 | Total Classes | **34** (DDoS, XSS, SQL Injection, Port Scan, etc.) |
-| Pre-processing | Smart Siphoning + RAM Compression |
+| Pre-processing | Stratified Sub-sampling + RAM Compression |
 
 ---
 
@@ -618,8 +618,8 @@ xai_nids_project/
 git clone https://github.com/<username>/xai_nids_project.git
 cd xai_nids_project
 
-# 2. Download the Champion Model from GitHub Releases and place it in models/
-#    (see "Champion Model Release" section)
+# 2. Download the Trained Model from GitHub Releases and place it in models/
+#    (see "Trained Model Release" section)
 
 # 3. Launch the entire system with a single command
 docker-compose up --build
@@ -655,7 +655,7 @@ python -m venv venv
 # Install dependencies
 pip install -r requirements.txt
 
-# (Optional) Retrain the champion model from scratch
+# (Optional) Retrain the model from scratch
 python src/train_model.py
 
 # (Optional) Generate global SHAP summary plot
@@ -708,11 +708,11 @@ labels:
 
 ---
 
-## 🏆 Champion Model Release
+## 🏆 Trained Model Release
 
 > **📦 Note:** `nids_champion_model.pkl` is approximately **305 MB** in size and is therefore not committed directly to the Git repository.
 
-The trained champion model is published at:
+The trained model is published at:
 
 **GitHub → Releases → [v1.0.0 Stable Release](../../releases/tag/v1.0.0)**
 
