@@ -1,7 +1,7 @@
 services:
   nids-cyber-radar:
     build: .
-    container_name: nids_enterprise_ui
+    container_name: nids_ui
     ports:
       - "8501:8501"
     volumes:

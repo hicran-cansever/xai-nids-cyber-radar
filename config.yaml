@@ -1,4 +1,4 @@
-# NIDS Cyber Radar - Kurumsal Konfigürasyon Dosyası
+# NIDS Cyber Radar - Konfigürasyon
 
 data:
   max_files_train: 63

@@ -18,7 +18,7 @@
 <br/>
 
 > **Kurs:** CENG 3544 — Computer and Network Security  
-> **Kapsam:** Makine Öğrenmesi + Açıklanabilir YZ + Kurumsal DevOps Boru Hattı
+> **Kapsam:** Makine Öğrenmesi + Açıklanabilir YZ + MLOps Boru Hattı
 
 </div>
 
@@ -45,7 +45,9 @@
 
 ## 🎯 Proje Hakkında
 
-**NIDS Cyber Radar**, CENG 3544 Computer and Network Security dersi kapsamında geliştirilen Ağ Saldırı Tespit Sistemi (NIDS)**'dir. Bu sistem ham ağ trafiği paketlerini gerçek zamanlı olarak sınıflandırır ve kararlarının gerekçesini **SHAP (SHapley Additive exPlanations)** değerleri aracılığıyla SOC analistlerine görsel olarak sunar.
+**NIDS Cyber Radar**, CENG 3544 Computer and Network Security dersi kapsamında geliştirilen bir **Ağ Saldırı Tespit Sistemi (NIDS)**'dir. Bu sistem; ham ağ trafiği paketlerini gerçek zamanlı olarak sınıflandırır ve kararlarının gerekçesini **SHAP (SHapley Additive exPlanations)** değerleri aracılığıyla SOC analistlerine görsel olarak sunar.
+
+Standart bir makine öğrenmesi alıştırmasının ötesine geçerek, proje; **RAM güvenliği**, **veri sızıntısı koruması**, **model bütünlük doğrulaması** ve **gerçek zamanlı açıklanabilirlik** gibi, üretim ortamlarında kritik olan mühendislik problemlerini özgün çözümlerle ele almaktadır.
 
 ### Temel Yetenekler
 
@@ -61,11 +63,15 @@
 
 ## 🏗️ Mimari Başarılar & Özel Mühendislik Çözümleri
 
+Bu bölüm, projenin standart bir ML modelinin ötesinde ele aldığı mühendislik problemlerini açıklamaktadır.
+
+---
+
 ### 1️⃣ Smart Siphoning — Akıllı Cımbızlama Boru Hattı
 
 **Modül:** [`src/data_loader.py`](src/data_loader.py) → `IoTDataLoader`
 
-**Problem:** CIC-IoT-2023 gibi devasa ağ trafiği veri setleri (63+ CSV dosyası),  `pd.read_csv()` yaklaşımıyla yüklendiğinde işletim sistemi düzeyinde **OOM (Out-of-Memory) kilitlenmesine** yol açar. Bunun yanı sıra `BENIGN` sınıfının veri setine ezici üstünlüğü, `XSS` veya `SQL Injection` gibi nadir saldırı sınıflarının model tarafından görmezden gelmesine neden olur.
+**Problem:** CIC-IoT-2023 gibi devasa ağ trafiği veri setleri (63+ CSV dosyası), naif bir `pd.read_csv()` yaklaşımıyla yüklendiğinde işletim sistemi düzeyinde **OOM (Out-of-Memory) kilitlenmesine** yol açar. Bunun yanı sıra `BENIGN` sınıfının veri setine ezici üstünlüğü, `XSS` veya `SQL Injection` gibi nadir saldırı sınıflarının model tarafından görmezden gelmesine neden olur.
 
 **Çözüm — Dört Kademeli Savunma Hattı:**
 
@@ -77,7 +83,7 @@
 │         │                                                       │
 │  [2] Hedef Tespiti: label/Label/class/attack_type  aranır      │
 │         │                                                       │
-│  [3] AKILLI CIMBIZLAMA (Stratified Sub-sampling)               │
+│  [3] STRATIFIED SUB-SAMPLING (Cımbızlama)                      │
 │       └─► Her sınıf için MAX 2000 örnek örneklenir             │
 │           (pandas apply tuzağından kaçmak için explicit döngü) │
 │         │                                                       │
@@ -217,7 +223,7 @@ xai_nids_project/
 │   ├── data_loader.py         # IoTDataLoader → Akıllı Cımbızlama + RAM Sıkıştırma
 │   ├── train_model.py         # Optuna TPE → Champion RF → SHA-256 Serileştirme
 │   ├── xai_explainer.py       # Global SHAP → Summary Bar Chart (300 DPI)
-│   ├── poc_ui.py              # Streamlit Enterprise SOC Terminal
+│   ├── poc_ui.py              # Streamlit SOC Terminal
 │   └── utils.py               # Yol/Config/Log/SHA-256 Güvenlik Katmanı
 │
 ├── 📁 models/
@@ -283,7 +289,7 @@ http://localhost:8501
 | Parametre | Değer |
 |---|---|
 | Servis Adı | `nids-cyber-radar` |
-| Container | `nids_enterprise_ui` |
+| Container | `nids_ui` |
 | Port Yönlendirme | `8501:8501` |
 | Volume — Veri | `./data:/app/data` |
 | Volume — Modeller | `./models:/app/models` |
@@ -388,7 +394,9 @@ models/
 
 ## 🎯 About The Project
 
-**NIDS Cyber Radar** is an ** Network Intrusion Detection System (NIDS)** developed as part of the CENG 3544 Computer and Network Security course. The system classifies raw network traffic packets in real time and visually presents the rationale behind each decision to SOC analysts via **SHAP (SHapley Additive exPlanations)** values.
+**NIDS Cyber Radar** is a **Network Intrusion Detection System (NIDS)** developed as part of the CENG 3544 Computer and Network Security course. The system classifies raw network traffic packets in real time and visually presents the rationale behind each decision to SOC analysts via **SHAP (SHapley Additive exPlanations)** values.
+
+Beyond a standard machine learning exercise, this project addresses production-critical engineering challenges including **RAM safety**, **data leakage prevention**, **model integrity verification**, and **real-time explainability** through original solutions.
 
 ### Core Capabilities
 
@@ -404,6 +412,9 @@ models/
 
 ## 🏗️ Architectural Achievements & Engineering Solutions
 
+This section explains the engineering challenges addressed by the project.
+
+---
 
 ### 1️⃣ Smart Siphoning — Intelligent Stratified Sub-sampling Pipeline
 
@@ -421,7 +432,7 @@ models/
 │        │                                                         │
 │  [2] Target Detection: label/Label/class/attack_type searched    │
 │        │                                                         │
-│  [3] SMART SIPHONING (Stratified Sub-sampling)                  │
+│  [3] STRATIFIED SUB-SAMPLING                                     │
 │      └─► Max 2000 samples drawn per class                       │
 │          (explicit loop to avoid pandas apply trap)              │
 │        │                                                         │
@@ -559,7 +570,7 @@ xai_nids_project/
 │   ├── data_loader.py         # IoTDataLoader → Smart Siphoning + RAM Compression
 │   ├── train_model.py         # Optuna TPE → Champion RF → SHA-256 Serialisation
 │   ├── xai_explainer.py       # Global SHAP → Summary Bar Chart (300 DPI)
-│   ├── poc_ui.py              # Streamlit Enterprise SOC Terminal
+│   ├── poc_ui.py              # Streamlit SOC Terminal
 │   └── utils.py               # Path/Config/Logging/SHA-256 Security Layer
 │
 ├── 📁 models/
@@ -625,7 +636,7 @@ http://localhost:8501
 | Parameter | Value |
 |---|---|
 | Service Name | `nids-cyber-radar` |
-| Container Name | `nids_enterprise_ui` |
+| Container Name | `nids_ui` |
 | Port Mapping | `8501:8501` |
 | Volume — Data | `./data:/app/data` |
 | Volume — Models | `./models:/app/models` |
@@ -745,6 +756,6 @@ This project is distributed under the MIT License. See [`LICENSE`](LICENSE) for 
 
 **CENG 3544 — Computer and Network Security**
 
-*Developed as an academic project demonstrating enterprise-grade MLOps and cybersecurity engineering principles.*
+*Developed as an academic project demonstrating MLOps and cybersecurity engineering principles.*
 
 </div>

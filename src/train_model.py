@@ -33,13 +33,11 @@ from utils import load_config, setup_logging, get_project_path, save_model_with_
 warnings.filterwarnings("ignore")
 optuna.logging.set_verbosity(optuna.logging.WARNING)
 
-# Logger Bağlantısı
+# Logger
 logger = logging.getLogger("ModelTrainer")
 
 
-# ---------------------------------------------------------------------------
-# KATMAN 1: Veri Hazırlama
-# ---------------------------------------------------------------------------
+# Veri hazırlama
 
 def _filter_rare_classes(X: pd.DataFrame, y: pd.Series, test_size: float) -> Tuple[pd.DataFrame, pd.Series]:
     """Stratify split'te temsil edilemeyecek kadar az örneği olan sınıfları filtreler.
@@ -133,9 +131,7 @@ def prepare_and_clean_data(
     return X_train, X_test, y_train_encoded, y_test_encoded, le
 
 
-# ---------------------------------------------------------------------------
-# KATMAN 2: Hiperparametre Optimizasyonu (Optuna)
-# ---------------------------------------------------------------------------
+# Hiperparametre optimizasyonu
 
 def _build_objective(
     X_train: pd.DataFrame,
@@ -226,9 +222,7 @@ def optimize_hyperparameters(
     return best_params
 
 
-# ---------------------------------------------------------------------------
-# KATMAN 3: Kapsamlı Performans Raporlama
-# ---------------------------------------------------------------------------
+# Performans raporlama
 
 def _log_full_report(
     y_test: np.ndarray,
@@ -341,12 +335,10 @@ def _save_confusion_matrix(
     logger.info(f"[RAPOR] Confusion Matrix kaydedildi: {output_path}")
 
 
-# ---------------------------------------------------------------------------
-# KATMAN 4: Ana Eğitim Akışı
-# ---------------------------------------------------------------------------
+# Ana eğitim akışı
 
-def train_final_champion() -> None:
-    """Nihai champion modeli eğitir, değerlendirir ve kaydeder.
+def train_and_evaluate() -> None:
+    """Modeli eğitir, değerlendirir ve kaydeder.
 
     Akış:
     1. Veri hazırlama ve bölme (``prepare_and_clean_data``).
@@ -359,11 +351,11 @@ def train_final_champion() -> None:
     optimizasyon atlanır ve config'deki sabit parametreler kullanılır.
     """
     config = load_config()
-    logger.info("Model eğitimi başlatılıyor (Kurumsal Konfigürasyon Devrede).")
+    logger.info("Model eğitimi başlatılıyor.")
 
     X_train, X_test, y_train, y_test, le = prepare_and_clean_data(config)
 
-    # --- Hiperparametre Optimizasyonu ---
+    # Hiperparametre optimizasyonu
     n_trials = config.get("model", {}).get("optuna_trials", 20)
 
     if n_trials > 0:
@@ -379,30 +371,30 @@ def train_final_champion() -> None:
             "n_jobs": config["model"]["n_jobs"],
         }
 
-    # --- Nihai Model Eğitimi (Tüm eğitim verisiyle) ---
-    logger.info(f"[EĞİTİM] Nihai champion modeli eğitiliyor. Parametreler: {best_params}")
+    # Model eğitimi
+    logger.info(f"Model eğitiliyor. Parametreler: {best_params}")
     start_time = time.time()
 
-    champion_rf = RandomForestClassifier(**best_params)
-    champion_rf.fit(X_train, y_train)
+    best_rf = RandomForestClassifier(**best_params)
+    best_rf.fit(X_train, y_train)
 
     elapsed_time = time.time() - start_time
 
-    # --- Tahmin ve Olasılıklar ---
-    preds = champion_rf.predict(X_test)
-    y_test_proba = champion_rf.predict_proba(X_test)
+    # Tahmin
+    preds = best_rf.predict(X_test)
+    y_test_proba = best_rf.predict_proba(X_test)
 
-    # --- Kapsamlı Raporlama ---
+    # Raporlama
     _log_full_report(y_test, preds, y_test_proba, le, elapsed_time)
 
-    # --- Model Kaydı — SHA-256 imzasıyla güvenli serileştirme ---
+    # Model kaydı
     models_dir = get_project_path("models")
     os.makedirs(models_dir, exist_ok=True)
     model_path = get_project_path("models", "nids_champion_model.pkl")
-    save_model_with_hash(champion_rf, model_path, compress=3)
-    logger.info(f"[SİSTEM] Champion model imzalı biçimde kaydedildi: {model_path}")
+    save_model_with_hash(best_rf, model_path, compress=3)
+    logger.info(f"Model kaydedildi: {model_path}")
 
 
 if __name__ == "__main__":
     setup_logging()
-    train_final_champion()
+    train_and_evaluate()

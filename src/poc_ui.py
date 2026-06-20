@@ -20,14 +20,10 @@ from utils import (
 
 warnings.filterwarnings("ignore")
 
-# ---------------------------------------------------------------------------
-# SAYFA AYARLARI
-# ---------------------------------------------------------------------------
+# Sayfa ayarları
 st.set_page_config(page_title="NIDS CYBER RADAR", page_icon="⚡", layout="wide")
 
-# ---------------------------------------------------------------------------
-# AESTHETIC ENTERPRISE THEME (CSS INJECTION)
-# ---------------------------------------------------------------------------
+# Tema (CSS)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
@@ -67,9 +63,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------------------------------------------------------------------
-# SABİTLER
-# ---------------------------------------------------------------------------
+# Sabitler
 
 PREFERRED_DISPLAY_COLS: Dict[str, str] = {
     "Header_Length": "HEADER_LEN",
@@ -83,11 +77,9 @@ BENIGN_CLASS_KEYWORD: str = _config.get("labels", {}).get("benign_keyword", "BEN
 XAI_TOP_N_FEATURES: int = _config.get("xai", {}).get("top_n_local_features", 12)
 
 
-# ---------------------------------------------------------------------------
-# KATMAN 1: Kaynak Yükleme (Cached)
-# ---------------------------------------------------------------------------
+# Kaynak yükleme
 
-@st.cache_resource(show_spinner="[+] YZ_BEYNI_YUKLENIYOR...")
+@st.cache_resource(show_spinner="Model yükleniyor...")
 def load_models() -> Tuple[Any, Any]:
     model_path = get_project_path("models", "nids_champion_model.pkl")
     le_path = get_project_path("models", "label_encoder.pkl")
@@ -103,12 +95,12 @@ def load_models() -> Tuple[Any, Any]:
         st.stop()
 
 
-@st.cache_resource(show_spinner="[+] XAI_MOTORU_BASLATILIYOR...")
+@st.cache_resource(show_spinner="SHAP başlatılıyor...")
 def load_shap_explainer(_model: Any) -> shap.TreeExplainer:
     return shap.TreeExplainer(_model)
 
 
-@st.cache_data(show_spinner="[+] TRAFIK_DINLENIYOR...")
+@st.cache_data(show_spinner="Trafik verisi okunuyor...")
 def load_sample_traffic() -> Tuple[pd.DataFrame, pd.Series]:
     config = load_config()
     max_files = config.get("data", {}).get("max_files_xai", 1)
@@ -118,9 +110,7 @@ def load_sample_traffic() -> Tuple[pd.DataFrame, pd.Series]:
     return X, y
 
 
-# ---------------------------------------------------------------------------
-# KATMAN 2: XAI — Şema Uyumu ve SHAP Hesaplama
-# ---------------------------------------------------------------------------
+# XAI fonksiyonları
 
 def _align_schema(live_packet: pd.DataFrame, model: Any) -> pd.DataFrame:
     """Canlı ağ paketini, modelin eğitimde öğrendiği 38 sütunluk şablona uydurur."""
@@ -139,10 +129,10 @@ def explain_prediction(
     predicted_class_idx: int,
     top_n: int = 12,
 ) -> Tuple[List[Tuple[str, float]], np.ndarray]:
-    """Çoklu Sınıf Uyumlu SHAP Değeri Çıkarımı"""
+    """Tek paket için SHAP değerlerini hesaplar."""
     shap_values = explainer.shap_values(aligned_packet, check_additivity=False)
     
-    # Çoklu sınıf matrisi ayrıştırması
+    # Çoklu sınıf ayrıştırma
     if isinstance(shap_values, list):
         class_shap = shap_values[predicted_class_idx][0]
     elif isinstance(shap_values, np.ndarray) and shap_values.ndim == 3:
@@ -164,7 +154,7 @@ def render_shap_chart(top_features: List[Tuple[str, float]], prediction_label: s
     names = [f[0] for f in reversed(top_features)]
     values = [f[1] for f in reversed(top_features)]
     
-    # Siber Güvenlik Karar Yönleri (Pozitif = İlgili Sınıfı Destekler)
+    # Pozitif = kararı destekler, negatif = zayıflatır
     colors = ["#ef4444" if v > 0 else "#3b82f6" for v in values]
 
     fig, ax = plt.subplots(figsize=(10, max(4, len(names) * 0.45)))
@@ -197,9 +187,7 @@ def render_shap_chart(top_features: List[Tuple[str, float]], prediction_label: s
     plt.close(fig)
 
 
-# ---------------------------------------------------------------------------
-# KATMAN 3: Yardımcı UI Fonksiyonları
-# ---------------------------------------------------------------------------
+# Yardımcı fonksiyonlar
 
 def get_system_logs(tail_lines: int = 10) -> str:
     log_path = get_project_path("logs", "system.log")
@@ -225,14 +213,12 @@ def _pick_random_packet(X_traffic: pd.DataFrame, rng: np.random.Generator) -> Tu
     return X_traffic.iloc[[idx]], idx
 
 
-# ---------------------------------------------------------------------------
-# KATMAN 4: ANA ARAYÜZ (FRONTEND)
-# ---------------------------------------------------------------------------
+# Ana arayüz
 
 st.markdown("<h1>⚡ NIDS_CYBER_RADAR_v2.0 ⚡</h1>", unsafe_allow_html=True)
 st.markdown(
     "<p style='text-align: center; color: #94a3b8;'>"
-    "[ ENTERPRISE_SOC_TERMINAL ] : Gerçek zamanlı ağ paketi inceleme ve XAI karar gerekçesi."
+    "Gerçek zamanlı ağ paketi inceleme ve XAI karar gerekçesi."
     "</p>",
     unsafe_allow_html=True,
 )
@@ -255,7 +241,7 @@ with st.sidebar:
     st.markdown("<h2 style='text-align:center; color: #f8fafc;'>SYS_CONTROL</h2>", unsafe_allow_html=True)
     st.divider()
     st.markdown("> **STATUS:** `ONLINE_🟢`")
-    st.markdown("> **ENGINE:** `RandomForest_Enterprise`")
+    st.markdown("> **ENGINE:** `RandomForest`")
     st.markdown(f"> **PACKET_POOL:** `{len(X_traffic):,}`")
     st.markdown(f"> **XAI_ENGINE:** `SHAP_TreeExplainer_🟢`")
     st.divider()

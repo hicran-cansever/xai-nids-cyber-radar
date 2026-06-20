@@ -7,7 +7,7 @@ from typing import Tuple, List, Optional
 
 from utils import load_config, get_project_path, check_file_exists, get_basename, list_files_in_dir
 
-# --- Logger ---
+# Logger
 logger = logging.getLogger("DataLoader")
 
 class IoTDataLoader:
@@ -33,7 +33,7 @@ class IoTDataLoader:
         max_limit = min(max_files, len(all_files)) if max_files > 0 else len(all_files)
         if random_select:
             selected_files = rng.sample(all_files, max_limit)
-            logger.info(f"{len(all_files)} dosya arasından {len(selected_files)} tanesinde NADİR SALDIRI AVI başlatıldı.")
+            logger.info(f"{len(all_files)} dosyadan {len(selected_files)} tanesi seçildi.")
         else:
             selected_files = all_files[:max_limit]
 
@@ -60,10 +60,9 @@ class IoTDataLoader:
             if target_col is None:
                 continue
                 
-            # 3. AKILLI CIMBIZLAMA STRATEJİSİ (Pandas Çökme Korumalı)
+            # 3. Stratified sub-sampling
             pre_siphon_rows = len(df)
-            
-            # Pandas apply tuzağına düşmemek için Explicit (Açık) Döngü kullanıyoruz
+
             sampled_chunks = []
             for _, group in df.groupby(target_col):
                 n_samples = min(len(group), MAX_SAMPLES_PER_CLASS)
@@ -94,28 +93,28 @@ class IoTDataLoader:
             end_mem = df.memory_usage().sum() / 1024**2
             logger.info(
                 f"[{get_basename(file)}] "
-                f"Cımbızlanan Satır: {pre_siphon_rows} -> {post_siphon_rows} | "
+                f"Satır: {pre_siphon_rows} -> {post_siphon_rows} | "
                 f"RAM: {start_mem:.2f} MB -> {end_mem:.2f} MB"
             )
             
             df_list.append(df)
 
         if not df_list:
-            raise ValueError("Okunabilen ve cımbızlanan hiçbir veri bulunamadı!")
+            raise ValueError("Okunabilen veri bulunamadı.")
 
         # Tüm dosyaları güvenle birleştir
         final_df = pd.concat(df_list, ignore_index=True)
         
         target_col = next((name for name in possible_target_names if name in final_df.columns), None)
         if target_col is None:
-            raise KeyError("Kritik Hata: Birleştirme sonrasında Hedef (Target) sütunu kayboldu!")
+            raise KeyError("Birleştirme sonrasında hedef sütunu bulunamadı.")
             
         logger.info(f"Hedef (Target) Sütunu tespit edildi: '{target_col}'")
         
         y: pd.Series = final_df[target_col]
         X: pd.DataFrame = final_df.drop(target_col, axis=1)
         
-        # --- KRİTİK: Label sütunundaki NaN satırları temizle ---
+        # Label sütunundaki NaN temizliği
         nan_mask = y.notna()
         nan_count = (~nan_mask).sum()
         if nan_count > 0:
@@ -123,5 +122,5 @@ class IoTDataLoader:
             X = X[nan_mask].reset_index(drop=True)
             y = y[nan_mask].reset_index(drop=True)
         
-        logger.info(f"Nihai Akıllı Veri Seti Yüklendi. Toplam Avlanan Satır: {len(X)}, Parametre: {len(X.columns)}")
+        logger.info(f"Veri seti yüklendi. Satır: {len(X)}, Sütun: {len(X.columns)}")
         return X, y
