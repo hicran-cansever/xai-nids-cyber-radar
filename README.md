@@ -47,7 +47,7 @@
 
 **NIDS Cyber Radar**, CENG 3544 Computer and Network Security dersi kapsamında geliştirilen bir **Ağ Saldırı Tespit Sistemi (NIDS)**'dir. Bu sistem; ham ağ trafiği paketlerini gerçek zamanlı olarak sınıflandırır ve kararlarının gerekçesini **SHAP (SHapley Additive exPlanations)** değerleri aracılığıyla SOC analistlerine görsel olarak sunar.
 
-Standart bir makine öğrenmesi alıştırmasının ötesine geçerek, proje; **RAM güvenliği**, **veri sızıntısı koruması**, **model bütünlük doğrulaması** ve **gerçek zamanlı açıklanabilirlik** gibi, üretim ortamlarında kritik olan mühendislik problemlerini özgün çözümlerle ele almaktadır.
+
 
 ### Temel Yetenekler
 
@@ -396,7 +396,7 @@ models/
 
 **NIDS Cyber Radar** is a **Network Intrusion Detection System (NIDS)** developed as part of the CENG 3544 Computer and Network Security course. The system classifies raw network traffic packets in real time and visually presents the rationale behind each decision to SOC analysts via **SHAP (SHapley Additive exPlanations)** values.
 
-Beyond a standard machine learning exercise, this project addresses production-critical engineering challenges including **RAM safety**, **data leakage prevention**, **model integrity verification**, and **real-time explainability** through original solutions.
+
 
 ### Core Capabilities
 
